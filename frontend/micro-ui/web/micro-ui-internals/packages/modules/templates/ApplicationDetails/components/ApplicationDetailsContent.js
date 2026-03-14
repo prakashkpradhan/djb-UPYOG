@@ -278,7 +278,7 @@ function ApplicationDetailsContent({
     setSelectedData(data);
     setShowPopup(true);
   };
-  console.log("===========================");
+
   return (
     <Card style={{ position: "relative" }} className={"employeeCard-override"}>
       {/* For UM-4418 changes */}
