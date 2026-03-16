@@ -109,6 +109,7 @@ public class EnrichmentService {
 		waterTankerDetail.setLocalityCode(waterTankerRequest.getWaterTankerBookingDetail().getAddress().getLocalityCode());
 		waterTankerDetail.setLatitude(waterTankerRequest.getWaterTankerBookingDetail().getAddress().getLatitude());
 		waterTankerDetail.setLongitude(waterTankerRequest.getWaterTankerBookingDetail().getAddress().getLongitude());
+		waterTankerDetail.setWTfileStoreId(waterTankerRequest.getWaterTankerBookingDetail().getWTfileStoreId());
 		String roles = waterTankerRequest.getRequestInfo().getUserInfo().getRoles()
                 .stream()
                 .map(Role::getName)
