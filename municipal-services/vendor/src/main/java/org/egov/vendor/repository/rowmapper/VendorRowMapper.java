@@ -13,6 +13,7 @@ import org.egov.vendor.web.model.AuditDetails;
 import org.egov.vendor.web.model.Vendor;
 import org.egov.vendor.web.model.Vendor.StatusEnum;
 import org.egov.vendor.web.model.VendorWorkOrder;
+import org.egov.vendor.web.model.fillingpoint.FillingPoint;
 import org.egov.vendor.web.model.location.Address;
 import org.egov.vendor.web.model.location.Boundary;
 import org.postgresql.util.PGobject;
@@ -76,6 +77,7 @@ public class VendorRowMapper implements ResultSetExtractor<List<Vendor>> {
 			}
 			addChildrenToProperty(rs, currentvendor);
 			addWorkOrderToVendor(rs, currentvendor);
+			addFillingPointToVendor(rs, currentvendor);
 		}
 
 		return new ArrayList<>(vendorMap.values());
@@ -136,6 +138,35 @@ public class VendorRowMapper implements ResultSetExtractor<List<Vendor>> {
 			if (vendor.getVendorWorkOrder().stream().noneMatch(wo -> wo.getId().equals(vwoId))) {
 				vendor.getVendorWorkOrder().add(workOrder);
 			}
+		}
+	}
+
+	private void addFillingPointToVendor(ResultSet rs, Vendor vendor) throws SQLException {
+		String fpId = rs.getString("fp_id");
+
+		if (fpId != null && vendor.getFillingPoint() == null) {
+			FillingPoint fillingPoint = FillingPoint.builder()
+					.id(fpId)
+					.fillingPointId(rs.getString("fp_filling_point_id"))
+					.tenantId(rs.getString("fp_tenant_id"))
+					.fillingPointName(rs.getString("filling_point_name"))
+					.emergencyName(rs.getString("emergency_name"))
+					.eeName(rs.getString("ee_name"))
+					.eeEmail(rs.getString("ee_email"))
+					.eeMobile(rs.getString("ee_mobile"))
+					.aeName(rs.getString("ae_name"))
+					.aeEmail(rs.getString("ae_email"))
+					.aeMobile(rs.getString("ae_mobile"))
+					.jeName(rs.getString("je_name"))
+					.jeEmail(rs.getString("je_email"))
+					.jeMobile(rs.getString("je_mobile"))
+					.createdBy(rs.getString("fp_createdby"))
+					.lastModifiedBy(rs.getString("fp_lastmodifiedby"))
+					.createdTime(rs.getLong("fp_createdtime"))
+					.lastModifiedTime(rs.getLong("fp_lastmodifiedtime"))
+					.build();
+
+			vendor.setFillingPoint(fillingPoint);
 		}
 	}
 	}

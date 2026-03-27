@@ -199,7 +199,16 @@
   }
 }
 
+@media (max-width: 768px) {
+  .submit-bar {
+    padding-inline: 24px;
+    border-radius: 10px;
+    box-shadow: none;
+    background: linear-gradient(278deg, rgba(110, 191, 221, 0.925) -24.44%, rgba(97, 119, 236, 0.9) 93.53%);
+  }
+}
 @screen dt {
+
   .submit-bar,
   .submit-bar-disabled {
     width: 240px;
@@ -365,7 +374,7 @@
     }
 
     /* Remove any default margins that might interfere */
-    .label-field-pair > * {
+    .label-field-pair>* {
       margin: 0;
       width: 100%;
     }
@@ -506,7 +515,7 @@
   box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.08);
 }
 
-.new-employee-card > * {
+.new-employee-card>* {
   position: relative;
   z-index: 1;
 }
@@ -916,7 +925,6 @@
   display: flex;
   flex-direction: column;
   width: 100%;
-  padding-bottom: 16px;
   overflow-y: scroll;
 }
 
@@ -1217,6 +1225,7 @@
   box-shadow: 4px 0 24px rgba(0, 0, 0, 0.04);
   position: relative;
   z-index: 101;
+  padding: 20px;
 }
 
 /* Width Control */
@@ -1226,6 +1235,7 @@
 
 .premium-sidebar.collapsed {
   width: var(--sidebar-collapsed);
+  padding:5px;
 }
 
 /* --- Header & Brand --- */
@@ -1415,15 +1425,21 @@
   display: none;
 }
 
+.module-sidebar-wrapper {
+  height: 100%;
+}
+
 @media (max-width: 768px) {
+
   /* Wrapper becomes a sticky top bar, not a flex column member */
   .module-sidebar-wrapper {
-    position: sticky;
+    position: fixed;
     top: 0;
-    z-index: 200;
-    width: 100%;
-    height: auto;
-    flex-shrink: 0;
+    left: 0;
+    height: 100vh;
+    z-index: 100;
+    pointer-events: none;
+    /* Let clicks pass through when hidden */
   }
 
   /* Hide desktop sidebar — zero dimensions so flex row is unaffected */
@@ -1436,6 +1452,14 @@
     border: none !important;
     padding: 0 !important;
     margin: 0 !important;
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    width: 280px !important;
+    /* Force fixed width on mobile drawer */
+    transform: translateX(-100%);
+    box-shadow: 10px 0 30px rgba(0, 0, 0, 0.15);
   }
 
   /* Hide old toggle + backdrop */
@@ -1488,36 +1512,13 @@
     pointer-events: none;
     transition: opacity 0.4s ease;
   }
-
-  .module-sidebar-backdrop.visible {
+  module-sidebar-wrapper .module-sidebar-backdrop.visible {
     opacity: 1;
     pointer-events: auto;
   }
 
-  /* Sidebar Wrapper & Mobile Off-canvas Drawer */
-  .module-sidebar-wrapper {
-    position: fixed;
-    top: 0;
-    left: 0;
-    height: 100vh;
-    z-index: 100;
-    pointer-events: none;
-    /* Let clicks pass through when hidden */
-  }
-
   .module-sidebar-wrapper.mobile-open {
     pointer-events: auto;
-  }
-
-  .premium-sidebar {
-    position: absolute;
-    top: 0;
-    left: 0;
-    height: 100vh;
-    width: 280px !important;
-    /* Force fixed width on mobile drawer */
-    transform: translateX(-100%);
-    box-shadow: 10px 0 30px rgba(0, 0, 0, 0.15);
   }
 
   .premium-sidebar.mobile-open {
@@ -1563,6 +1564,7 @@
 }
 
 @media (min-width: 768px) {
+
   .mobile-sidebar-toggle,
   .mobile-close-btn,
   .sidebar-backdrop {

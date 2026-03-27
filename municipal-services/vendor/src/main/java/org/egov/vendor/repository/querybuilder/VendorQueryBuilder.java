@@ -32,12 +32,18 @@ public class VendorQueryBuilder {
 			+ " vwo.alternateNumber as vwo_alternateNumber, vwo.emailId as vwo_emailId, vwo.servicetype as vwo_servicetype, "
 			+ " vendor.id as vendor_id, vendor.createdby as vendor_createdby, vendor.lastmodifiedby as vendor_lastmodifiedby, "
 			+ " vendor.createdtime as vendor_createdtime, vendor.lastmodifiedtime as vendor_lastmodifiedtime, "
-			+ " vendor.vendor_idgen as vendor_idgen, vendor.additionaldetails as vendor_additionaldetails, "
-			+ " vendor_address.id as vendor_address_id FROM eg_vendor vendor "
+			+ " vendor.vendor_idgen as vendor_idgen, vendor.additionaldetails as vendor_additionaldetails, vendor_address.id as vendor_address_id, "
+			+ " fp.id as fp_id, fp.filling_point_id as fp_filling_point_id, "
+			+ " fp.tenant_id as fp_tenant_id, fp.filling_point_name,  fp.emergency_name,  fp.ee_name, fp.ee_email, fp.ee_mobile, "
+			+ " fp.ae_name, fp.ae_email, fp.ae_mobile,  fp.je_name, fp.je_email, fp.je_mobile,  fp.createdby as fp_createdby, fp.lastmodifiedby as fp_lastmodifiedby, "
+	        + " fp.createdtime as fp_createdtime, fp.lastmodifiedtime as fp_lastmodifiedtime "
+		    + " FROM eg_vendor vendor "
 			+ " INNER JOIN eg_vendor_address vendor_address on  vendor_address.vendor_id=vendor.id "
 			+ " LEFT OUTER JOIN eg_vendor_driver vendor_driver on  vendor_driver.vendor_id=vendor_address.id "
 			+ " LEFT OUTER JOIN eg_vendor_vehicle vendor_vehicle on vendor_vehicle.vendor_id=vendor_driver.vendor_id "
-			+ " LEFT OUTER JOIN eg_vendor_work_order vwo ON vwo.vendor_id = vendor.id";
+			+ " LEFT OUTER JOIN eg_vendor_work_order vwo ON vwo.vendor_id = vendor.id"
+			+ " LEFT JOIN eg_wt_fillingpoint_vendor_map fvm ON fvm.vendor_id::varchar = vendor.id "
+			+ " LEFT JOIN upyog_rs_water_tanker_filling_point fp ON fp.id = fvm.filling_point_id::varchar ";
 
 	private static final String PAGINATION_WRAPPER = "SELECT * FROM "
 			+ "(SELECT *, DENSE_RANK() OVER (ORDER BY SORT_BY SORT_ORDER) offset_ FROM " + "({})"
