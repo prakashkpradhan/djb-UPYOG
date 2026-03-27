@@ -124,7 +124,7 @@ const EmployeeApp = ({ path, url, userType }) => {
                 (props) => (
                   <AddDriver {...props} parentRoute={path} />
                 ),
-                layouts.normal
+                layouts.action
               )}
             />
 
@@ -134,7 +134,7 @@ const EmployeeApp = ({ path, url, userType }) => {
                 (props) => (
                   <AddVehicle {...props} parentRoute={path} />
                 ),
-                layouts.normal
+                layouts.action
               )}
             />
 

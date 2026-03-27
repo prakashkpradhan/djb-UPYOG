@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { Label, DatePicker, SubmitBar, Toast, Card, Dropdown, UploadFile} from "@djb25/digit-ui-react-components";
+import { Label, DatePicker, SubmitBar, Toast, Card, Dropdown, UploadFile } from "@djb25/digit-ui-react-components";
 import VerticalTimeline from "./VerticalTimeline";
 import SelectServiceType from "../pageComponents/SelectServiceType";
 

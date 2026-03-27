@@ -321,7 +321,7 @@ const VehicleDetails = (props) => {
   return (
     <React.Fragment>
       {!isLoading ? (
-        <React.Fragment>
+        <div className="employee-form-content">
           <Card className="vehicle-details-card" style={{ position: "relative" }}>
             {vehicleData?.[0]?.employeeResponse?.map((detail, index) => (
               <React.Fragment key={index}>
@@ -397,7 +397,7 @@ const VehicleDetails = (props) => {
             {displayMenu ? <Menu localeKeyPrefix={"ES_FSM_REGISTRY_ACTION"} options={["EDIT", "DELETE"]} t={t} onSelect={onActionSelect} /> : null}
             <SubmitBar label={t("ES_COMMON_TAKE_ACTION")} onSubmit={() => setDisplayMenu(!displayMenu)} />
           </ActionBar>
-        </React.Fragment>
+        </div>
       ) : (
         <Loader />
       )}
