@@ -313,10 +313,13 @@ const SearchFillingPointAddress = () => {
         {
           Header: t("WT_LOCALITY"),
           // accessor: (row) => row?.address?.locality || "NA",
-          id: "locality",
-          Cell: ({ row }) => (
-            <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-              <span>{row.original?.address?.locality || "NA"}</span>
+          Cell: ({ row }) => {
+            const localities = row.original?.fillingPointLocalityCodes?.length > 0
+              ? row.original.fillingPointLocalityCodes.join(", ")
+              : row.original?.address?.locality || "NA";
+            return (
+              <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                <span>{localities}</span>
               {/* <div
                 onClick={() => handleLocalityAdd(row)}
                 style={{
@@ -333,12 +336,13 @@ const SearchFillingPointAddress = () => {
                 <AddIcon styles={{ width: "16px", height: "16px" }} fill="#1D4E7F" />{t("CS_COMMON_ADD")}
               </div> */}
             </div>
-          ),
+          );
+        },
         },
         {
           Header: t("WT_ADD_LOCALITY"),
           Cell: ({ row }) => {
-            const hasLocality = row.original?.address?.locality && row.original?.address?.locality !== "NA";
+            const hasLocality = (row.original?.fillingPointLocalityCodes?.length > 0) || (row.original?.address?.locality && row.original?.address?.locality !== "NA");
             return (
               <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
                 {!hasLocality ? (

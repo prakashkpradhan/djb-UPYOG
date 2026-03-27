@@ -312,7 +312,7 @@ const VendorInbox = (props) => {
     { enabled: vendorIds?.length > 0 }
   );
 
-  const { data: allFillingPointsData } = Digit.Hooks.wt.useFillPointSearch(
+  const { data: allFillingPointsData, isLoading: isAllFillingPointsLoading } = Digit.Hooks.wt.useFillPointSearch(
     {
       tenantId,
       filters: { limit: 1000 },
@@ -338,6 +338,8 @@ const VendorInbox = (props) => {
     mapFixedFilling(payload, {
       onSuccess: () => {
         setToast({ label: t("WT_FIXED_FILLING_MAPPING_SUCCESS") });
+        props.refetchData();
+        props.refetchVendor && props.refetchVendor();
         setTimeout(closeToast, 5000);
       },
       onError: (err) => {
@@ -414,7 +416,7 @@ const VendorInbox = (props) => {
           // },
           {
             Header: t("WT_FILLING_POINT"),
-            accessor: (row) => row?.fillingPointId || row?.fillingpointmetadata?.fillingPointId || row?.filling_pt_name || row?.fillingPoint || "NA",
+            accessor: (row) => row?.fillingPointId || row.dsoDetails?.fillingPointId || (row.dsoDetails?.fillingPoint && typeof row.dsoDetails.fillingPoint === "object" ? row.dsoDetails.fillingPoint?.fillingPointName : row.dsoDetails?.fillingPoint) || row?.fillingpointmetadata?.fillingPointId || row?.filling_pt_name || row?.fillingPoint || "NA",
             id: "fillingPoint",
             Cell: ({ row }) => {
               return (
@@ -424,13 +426,16 @@ const VendorInbox = (props) => {
                     const fpId = String(fp.id || fp.bookingId || fp.fillingPointId || fp.uuid || fp.fillingpointmetadata?.fillingPointId);
                     const rowFpId = String(
                       row.original.fillingPointId ||
+                        row.original.dsoDetails?.fillingPointId ||
+                        row.original.dsoDetails?.fillingPoint?.id ||
                         row.original.fillingpointmetadata?.fillingPointId ||
                         row.original.filling_pt_name ||
-                        row.original.fillingPoint ||
+                        (row.original.fillingPoint && typeof row.original.fillingPoint === "object" ? row.original.fillingPoint?.id : row.original.fillingPoint) ||
                         row.original.fillingPointDetail?.id ||
-                        row.original.fillingPointDetail?.bookingId
+                        row.original.fillingPointDetail?.bookingId ||
+                        ""
                     );
-                    return fpId === rowFpId && rowFpId !== "undefined" && rowFpId !== "null";
+                    return fpId === rowFpId && rowFpId !== "undefined" && rowFpId !== "null" && rowFpId !== "";
                   })}
                   option={allFillingPoints}
                   select={(value) => onFillingPointSelect(row, value)}
@@ -923,11 +928,11 @@ const VendorInbox = (props) => {
       default:
         return [];
     }
-  }, [props.selectedTab, vendors, drivers, tableData, additionalVendorData, t]);
+  }, [props.selectedTab, vendors, drivers, tableData, additionalVendorData, allFillingPoints, t]);
 
   // if it validate the user role then it starts working
   let result;
-  if (props.isLoading) {
+  if (props.isLoading || isAllFillingPointsLoading) {
     result = <Loader />;
   } else if (tableData.length === 0) {
     let emptyCardText = "";

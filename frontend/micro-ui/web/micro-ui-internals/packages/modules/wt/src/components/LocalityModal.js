@@ -50,8 +50,10 @@ const LocalityModal = ({ t, closeModal, onSubmit, initialValues, tenantId, modal
 
   // Pre-populate selectedLocality for UPDATE and VIEW modes
   React.useEffect(() => {
-    if (structuredLocalities.length > 0 && initialValues?.address?.locality && (isView || isUpdate)) {
-      const currentLocalityCodes = initialValues.address.locality.split(",").map((s) => s.trim());
+    if (structuredLocalities.length > 0 && (initialValues?.fillingPointLocalityCodes?.length > 0 || initialValues?.address?.locality) && (isView || isUpdate)) {
+      const currentLocalityCodes = initialValues?.fillingPointLocalityCodes?.length > 0
+        ? initialValues.fillingPointLocalityCodes
+        : initialValues.address.locality.split(",").map((s) => s.trim());
       const preSelected = structuredLocalities
         .filter((loc) => currentLocalityCodes.includes(loc.code))
         .map((loc) => [loc.i18nKey, loc]);
@@ -144,7 +146,11 @@ const LocalityModal = ({ t, closeModal, onSubmit, initialValues, tenantId, modal
         >
           <div style={{ marginBottom: "16px" }}>
             <CardLabel>{t("WT_CURRENT_LOCALITY")}</CardLabel>
-            <div style={{ fontWeight: "600", marginBottom: "8px" }}>{initialValues?.address?.locality || "NA"}</div>
+            <div style={{ fontWeight: "600", marginBottom: "8px" }}>
+              {initialValues?.fillingPointLocalityCodes?.length > 0
+                ? initialValues.fillingPointLocalityCodes.join(", ")
+                : initialValues?.address?.locality || "NA"}
+            </div>
           </div>
 
           {!isView ? (
