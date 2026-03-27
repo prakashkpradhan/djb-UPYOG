@@ -121,8 +121,6 @@ const DesktopInbox = ({ tableConfig, filterComponent, ...props }) => {
           return {
             style: {
               maxWidth: cellInfo.column.Header === t("HR_EMP_ID_LABEL") ? "150px" : "",
-              padding: "20px 18px",
-              fontSize: "16px",
               minWidth: "150px",
             },
           };
