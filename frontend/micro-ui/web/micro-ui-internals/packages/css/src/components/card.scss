@@ -208,6 +208,7 @@
   }
 }
 @screen dt {
+
   .submit-bar,
   .submit-bar-disabled {
     width: 240px;
@@ -373,7 +374,7 @@
     }
 
     /* Remove any default margins that might interfere */
-    .label-field-pair > * {
+    .label-field-pair>* {
       margin: 0;
       width: 100%;
     }
@@ -514,7 +515,7 @@
   box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.08);
 }
 
-.new-employee-card > * {
+.new-employee-card>* {
   position: relative;
   z-index: 1;
 }
@@ -1224,8 +1225,7 @@
   box-shadow: 4px 0 24px rgba(0, 0, 0, 0.04);
   position: relative;
   z-index: 101;
-  overflow-y: scroll;
-  padding-bottom: 62px;
+  padding: 20px;
 }
 
 /* Width Control */
@@ -1235,6 +1235,7 @@
 
 .premium-sidebar.collapsed {
   width: var(--sidebar-collapsed);
+  padding:5px;
 }
 
 /* --- Header & Brand --- */
@@ -1429,7 +1430,8 @@
 }
 
 @media (max-width: 768px) {
-  /* Sidebar Wrapper & Mobile Off-canvas Drawer */
+
+  /* Wrapper becomes a sticky top bar, not a flex column member */
   .module-sidebar-wrapper {
     position: fixed;
     top: 0;
@@ -1562,6 +1564,7 @@
 }
 
 @media (min-width: 768px) {
+
   .mobile-sidebar-toggle,
   .mobile-close-btn,
   .sidebar-backdrop {
