@@ -234,3 +234,79 @@ video::-webkit-media-controls-panel {
     flex-shrink: 0;
   }
 }
+
+/* Unified TopBar Pills (City, FY, Language) */
+.language-selector-wrapper,
+.city-selector-wrapper,
+.financial-year-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 14px;
+  border: 1px solid #e5e7eb; // Light Slate-200 border
+  border-radius: 8px;
+  background: #ffffff;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  min-width: fit-content;
+  justify-content: center;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+
+  &:hover {
+    border-color: #00497e;
+    background-color: #f8fafc;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  }
+
+  /* Internal Elements */
+  .flag-container {
+    width: 22px;
+    height: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+
+    svg {
+      width: 100%;
+      height: 100%;
+      display: block; // Fix for unwanted whitespace
+    }
+  }
+
+  .language-code,
+  .city-label,
+  span {
+    font-weight: 500;
+    font-size: 14px;
+    color: #111827; // Darker Slate-900 for text
+    letter-spacing: 0.01em;
+  }
+
+  .chevron-icon {
+    width: 12px;
+    height: 12px;
+    color: #4b5563; // Slate-600
+    transition: transform 0.2s ease;
+    margin-top: 1px; // Slight adjustment for optical alignment
+  }
+
+  /* Fixed size for Calender and other icons in pills */
+  svg:not(.chevron-icon):not(.flag-icon) {
+    width: 20px;
+    height: 20px;
+    color: #1f2937; // Dark Gray for icons
+    flex-shrink: 0;
+  }
+}
+
+/* Ensure the container is aligned */
+.language-selector-container,
+.city-selector-container {
+  display: flex;
+  align-items: center;
+
+  &.open .chevron-icon {
+    transform: rotate(180deg);
+  }
+}
