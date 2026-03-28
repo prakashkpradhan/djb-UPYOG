@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { FormComposer, Toast, Header } from "@djb25/digit-ui-react-components";
-import { useHistory } from "react-router-dom";
+import { FormComposer, Toast, VerticalTimeline } from "@djb25/digit-ui-react-components";
 //import DriverConfig from "../../configs/DriverConfig";
 import { useQueryClient } from "react-query";
 import DriverConfig from "../../../config/DriverConfig";
@@ -13,7 +12,6 @@ const AddDriver = ({ parentUrl, heading }) => {
 
   const stateId = Digit.ULBService.getStateId();
   const [showToast, setShowToast] = useState(null);
-  const history = useHistory();
   const [currentStep, setCurrentStep] = useState(1);
   const queryClient = useQueryClient();
   const steps = [t("ES_FSM_REGISTRY_TITLE_NEW_DRIVER")];
@@ -105,40 +103,41 @@ const AddDriver = ({ parentUrl, heading }) => {
     });
   };
 
-  const isMobile = window.Digit.Utils.browser.isMobile();
-
   return (
     <React.Fragment>
-      {/* <div>
-        <Header>{t("ES_FSM_REGISTRY_TITLE_NEW_DRIVER")}</Header>
-      </div> */}
-      <div style={{ display: "flex", width: "100%", gap: "24px" }}>
-        {/* Timeline */}
-        <Timeline steps={steps} currentStep={currentStep} />
-        <div style={{ flex: "1", overflowY: "auto" }}>
-          <FormComposer
-            isDisabled={!canSubmit}
-            label={t("ES_COMMON_APPLICATION_SUBMIT")}
-            config={Config.filter((i) => !i.hideInEmployee).map((config) => {
-              return {
-                ...config,
-                body: config.body.filter((a) => !a.hideInEmployee),
-              };
-            })}
-            fieldStyle={{ marginRight: 0 }}
-            onSubmit={onSubmit}
-            defaultValues={defaultValues}
-            onFormValueChange={onFormValueChange}
-            noBreakLine={true}
+      <VerticalTimeline
+        config={[
+          {
+            route: "vendor-details",
+            timeLine: [{ actions: t("ES_FSM_REGISTRY_TITLE_NEW_DRIVER"), currentStep: 1 }],
+          },
+        ]}
+        currentActiveIndex={currentStep - 1}
+        showFinalStep={false}
+      />
+      <div style={{ flex: "1", overflowY: "auto" }}>
+        <FormComposer
+          isDisabled={!canSubmit}
+          label={t("ES_COMMON_APPLICATION_SUBMIT")}
+          config={Config.filter((i) => !i.hideInEmployee).map((config) => {
+            return {
+              ...config,
+              body: config.body.filter((a) => !a.hideInEmployee),
+            };
+          })}
+          fieldStyle={{ marginRight: 0 }}
+          onSubmit={onSubmit}
+          defaultValues={defaultValues}
+          onFormValueChange={onFormValueChange}
+          noBreakLine={true}
+        />
+        {showToast && (
+          <Toast
+            error={showToast.key === "error" ? true : false}
+            label={t(showToast.key === "success" ? `ES_FSM_${showToast.action}_SUCCESS` : showToast.action)}
+            onClose={closeToast}
           />
-          {showToast && (
-            <Toast
-              error={showToast.key === "error" ? true : false}
-              label={t(showToast.key === "success" ? `ES_FSM_${showToast.action}_SUCCESS` : showToast.action)}
-              onClose={closeToast}
-            />
-          )}
-        </div>
+        )}
       </div>
     </React.Fragment>
   );

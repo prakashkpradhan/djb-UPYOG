@@ -1001,7 +1001,7 @@ const VendorInbox = (props) => {
           </div>
         </div>
       )}
-      <div style={{ flex: 1, marginLeft: props.userRole === "FSM_ADMIN" ? "" : "24px" }}>
+      <div style={{ flex: 1, width: "100%", marginLeft: props.userRole === "FSM_ADMIN" ? "" : "24px" }}>
         <RegistredVendorSearch
           onSearch={props.onSearch}
           type="desktop"

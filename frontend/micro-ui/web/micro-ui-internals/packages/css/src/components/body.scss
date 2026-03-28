@@ -27,7 +27,7 @@ body {
 }
 
 .link-label {
-  @apply block text-link text-primary-main mb-md ml-md cursor-pointer;
+  @apply block text-link text-primary-main cursor-pointer;
 
   &:hover {
     @apply text-primary-main;
@@ -265,10 +265,6 @@ body {
   .h1 {
     margin-left: 0;
     @apply text-heading-l-dt;
-  }
-
-  .link-label {
-    margin-left: 0;
   }
 
   .back-btn {

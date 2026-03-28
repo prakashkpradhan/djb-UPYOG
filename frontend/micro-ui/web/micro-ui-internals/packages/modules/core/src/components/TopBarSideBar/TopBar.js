@@ -177,6 +177,7 @@ const TopBar = ({
                     handleRoleChange={() => {}}
                     profilePic={profilePic}
                     userName={userDetails?.info?.name || userDetails?.info?.userInfo?.name || "Citizen"}
+                    userCode={userDetails?.info?.userName}
                     t={t}
                   />
                 </div>
@@ -248,13 +249,13 @@ const TopBar = ({
 
             {userDetails?.access_token && (
               <div className="left" style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-                <CustomUserDropdown
+                <EmployeeDesignationWrapper
+                  userDetails={userDetails}
                   userOptions={userOptions}
                   roleOptions={roleOptions}
                   selectedRole={selectedRole}
                   handleRoleChange={handleRoleChange}
                   profilePic={profilePic}
-                  userName={userDetails?.info?.name || userDetails?.info?.userInfo?.name || "Employee"}
                   t={t}
                 />
               </div>
@@ -268,6 +269,29 @@ const TopBar = ({
         )}
       </span>
     </div>
+  );
+};
+
+const EmployeeDesignationWrapper = ({ userDetails, ...props }) => {
+  const { t } = props;
+  const { isLoading, data } = Digit.Hooks.hrms.useHRMSSearch(
+    { codes: userDetails?.info?.userName },
+    Digit.ULBService.getCurrentTenantId(),
+    null,
+    null,
+    { enabled: !!userDetails?.info?.userName && userDetails?.info?.type === "EMPLOYEE" }
+  );
+
+  const designation = data?.Employees?.[0]?.assignments?.find((a) => a.isCurrentAssignment)?.designation;
+  const designationName = designation ? t("COMMON_MASTERS_DESIGNATION_" + designation) : "";
+
+  return (
+    <CustomUserDropdown
+      {...props}
+      userName={userDetails?.info?.name || userDetails?.info?.userInfo?.name || "Employee"}
+      designation={designationName}
+      userCode={userDetails?.info?.userName}
+    />
   );
 };
 

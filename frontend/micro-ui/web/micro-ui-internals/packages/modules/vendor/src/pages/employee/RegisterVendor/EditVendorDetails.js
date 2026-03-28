@@ -321,12 +321,12 @@ const EditVendorDetails = (props) => {
     <div className="employee-form-content">
       {!isLoading ? (
         <React.Fragment>
-          <Card style={{ position: "relative", paddingLeft: "30px" }}>
+          <Card>
             {dsoData?.[0]?.employeeResponse?.map((detail, index) => (
               <React.Fragment key={index}>
                 {index > 0 && <CardSectionHeader style={{ marginBottom: "16px", marginTop: "32px" }}>{t(detail.title)}</CardSectionHeader>}
-                <div style={!isMobile ? { marginLeft: "-15px" } : {}}>
-                  <StatusTable>
+                <div>
+                  <div className="formcomposer-section-grid">
                     {detail?.values?.map((value, index) => {
                       // ADDITIONAL DETAILS LOGIC
                       if (value.title === "ES_FSM_REGISTRY_DETAILS_ADDITIONAL_DETAILS") {
@@ -337,7 +337,7 @@ const EditVendorDetails = (props) => {
                         return (
                           <React.Fragment key={value.title}>
                             {/* Additional Details Title */}
-                            <Row label={t(value.title)} text="" className="border-none" />
+                            <Row label={t(value.title)} text="" className="border-none flex-box" />
 
                             {/* Additional Details Card */}
                             {isVendorAdditionalLoading ? (
@@ -407,7 +407,7 @@ const EditVendorDetails = (props) => {
                           text={value.value ? t(String(value.value)) : "N/A"}
                           last={index === detail?.values?.length - 1}
                           caption={value.caption}
-                          className={`border-none ${!isMobile ? "vendor-details-row" : ""}`}
+                          className={`border-none flex-box ${!isMobile ? "vendor-details-row" : ""}`}
                         />
                       );
                     })}
@@ -449,7 +449,7 @@ const EditVendorDetails = (props) => {
                         {t(`${detail.type}_ADD`)}
                       </div>
                     )}
-                  </StatusTable>
+                  </div>
                 </div>
               </React.Fragment>
             ))}

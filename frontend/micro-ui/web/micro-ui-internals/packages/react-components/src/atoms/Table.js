@@ -16,6 +16,25 @@ const getSearchableText = (obj) => {
   return Object.values(obj).map(getSearchableText).join(" ");
 };
 
+const VALID_TEXT_ALIGN = new Set(["left", "right", "center", "start", "end", "justify"]);
+const DEFAULT_TEXT_ALIGN = "left";
+const DEFAULT_ROW_HEIGHT = 52;
+
+const normalizeTextAlign = (value, fallback = DEFAULT_TEXT_ALIGN) => {
+  if (!value || typeof value !== "string") return fallback;
+  const align = value.toLowerCase();
+  return VALID_TEXT_ALIGN.has(align) ? align : fallback;
+};
+
+const getColumnAlign = (column, fallback = DEFAULT_TEXT_ALIGN) =>
+  normalizeTextAlign(column?.align || column?.textAlign || column?.meta?.align || column?.meta?.textAlign, fallback);
+
+const getFlexJustifyFromAlign = (align = DEFAULT_TEXT_ALIGN) => {
+  if (align === "right" || align === "end") return "flex-end";
+  if (align === "center") return "center";
+  return "flex-start";
+};
+
 /* ─── Design Tokens ─────────────────────────────────────────────────────────── */
 const T = {
   accent: "#2563eb",
@@ -39,18 +58,21 @@ const T = {
 };
 
 /* ─── Icons ──────────────────────────────────────────────────────────────────── */
-const SortIndicator = ({ isSorted, isSortedDesc }) => {
-  return (
-    <div style={{ display: "flex", flexDirection: "column", gap: 1, alignItems: "center", justifyContent: "center" }}>
-      <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke={isSorted && !isSortedDesc ? T.accent : "currentColor"} strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" style={{ opacity: isSorted && !isSortedDesc ? 1 : 0.35, transition: "all 0.15s" }}>
-        <polyline points="18 15 12 9 6 15" />
-      </svg>
-      <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke={isSorted && isSortedDesc ? T.accent : "currentColor"} strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" style={{ opacity: isSorted && isSortedDesc ? 1 : 0.35, transition: "all 0.15s" }}>
-        <polyline points="6 9 12 15 18 9" />
-      </svg>
-    </div>
-  );
-};
+const IconSortNeutral = () => (
+  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" style={{ opacity: 0.3 }}>
+    <path d="M7 16V4m0 0L3 8m4-4 4 4" /><path d="M17 8v12m0 0 4-4m-4 4-4-4" />
+  </svg>
+);
+const IconSortAsc = () => (
+  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M12 19V5m0 0-7 7m7-7 7 7" />
+  </svg>
+);
+const IconSortDesc = () => (
+  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M12 5v14m0 0 7-7m-7 7-7-7" />
+  </svg>
+);
 
 const IconSearch = () => (
   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
@@ -108,7 +130,7 @@ const Table = ({
   getCellProps,
   currentPage = 0,
   pageSizeLimit = 10,
-  disableSort = false,
+  disableSort = true,
   autoSort = true,
   initSortId = "",
   onSearch = false,
@@ -136,11 +158,6 @@ const Table = ({
   const [internalSearch, setInternalSearch] = useState("");
   const [searchFocused, setSearchFocused] = useState(false);
 
-  const sortableColumns = React.useMemo(
-    () => columns.map(col => ({ ...col, disableSortBy: false })),
-    [columns]
-  );
-
   const {
     getTableProps,
     getTableBodyProps,
@@ -160,7 +177,7 @@ const Table = ({
     state: { pageIndex, pageSize, sortBy, globalFilter },
   } = useTable(
     {
-      columns: sortableColumns,
+      columns,
       data,
       initialState: {
         pageIndex: currentPage,
@@ -171,7 +188,7 @@ const Table = ({
       pageCount: totalRecords > 0 ? Math.ceil(totalRecords / pageSizeLimit) : -1,
       manualPagination: manualPagination,
       disableMultiSort: false,
-      disableSortBy: false, // Forces sorting globally despite props
+      disableSortBy: disableSort,
       manualSortBy: autoSort ? false : true,
       autoResetPage: false,
       autoResetSortBy: false,
@@ -320,7 +337,7 @@ const Table = ({
               <tr {...headerGroup.getHeaderGroupProps()} style={{ background: T.surfaceAlt }}>
 
                 {showAutoSerialNo && (
-                  <th style={{ width: 48, padding: "8px 8px", textAlign: "center", borderBottom: `2px solid ${T.borderStrong}`, fontSize: 11, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.07em", color: T.textSecondary, whiteSpace: "nowrap", verticalAlign: "top" }}>
+                  <th style={{ width: 48, padding: "12px 8px", textAlign: "center", borderBottom: `2px solid ${T.borderStrong}`, fontSize: 11, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.07em", color: T.textSecondary, whiteSpace: "nowrap", verticalAlign: "middle", height: DEFAULT_ROW_HEIGHT }}>
                     {typeof showAutoSerialNo === "string" ? t(showAutoSerialNo) : t("TB_SNO")}
                   </th>
                 )}
@@ -328,17 +345,20 @@ const Table = ({
                 {headerGroup.headers.map((column) => {
                   const isSorted = column.isSorted;
                   const headerProps = column.getHeaderProps(column.getSortByToggleProps());
+                  const textAlign = getColumnAlign(column);
                   const mergedStyle = {
                     ...(headerProps.style || {}),
                     position: "relative",
-                    padding: "8px 12px",
-                    verticalAlign: "top",
+                    padding: "12px 14px",
+                    verticalAlign: "middle",
                     borderBottom: `2px solid ${T.borderStrong}`,
                     whiteSpace: "nowrap",
                     userSelect: "none",
                     cursor: column.canSort ? "pointer" : "default",
                     background: isSorted ? T.accentLight : T.surfaceAlt,
                     transition: "background 0.15s",
+                    textAlign,
+                    height: DEFAULT_ROW_HEIGHT,
                   };
 
                   return (
@@ -347,13 +367,13 @@ const Table = ({
                       title={column.canSort ? "Click to sort" : ""}
                       style={mergedStyle}
                     >
-                      <div style={{ display: "flex", alignItems: "center", gap: 5, justifyContent: "center" }}>
+                      <div style={{ display: "flex", alignItems: "center", gap: 5, justifyContent: getFlexJustifyFromAlign(textAlign), width: "100%" }}>
                         <span style={{ fontSize: 11, fontWeight: 700, textTransform: "uppercase", letterSpacing: "0.07em", color: isSorted ? T.accentDark : T.textSecondary, transition: "color 0.15s" }}>
                           {column.render("Header")}
                         </span>
                         {column.canSort && (
                           <span style={{ lineHeight: 0, color: isSorted ? T.accent : T.textMuted }}>
-                            <SortIndicator isSorted={isSorted} isSortedDesc={column.isSortedDesc} />
+                            {isSorted ? (column.isSortedDesc ? <IconSortDesc /> : <IconSortAsc />) : <IconSortNeutral />}
                           </span>
                         )}
                       </div>
@@ -392,10 +412,11 @@ const Table = ({
                       background: isHovered ? T.surfaceHover : i % 2 === 0 ? T.surface : T.surfaceAlt,
                       borderBottom: `1px solid ${T.border}`,
                       transition: "background 0.12s",
+                      height: DEFAULT_ROW_HEIGHT,
                     }}
                   >
                     {showAutoSerialNo && (
-                      <td style={{ padding: "8px 8px", textAlign: "center", verticalAlign: "middle" }}>
+                      <td style={{ padding: "12px 8px", textAlign: "center", verticalAlign: "middle" }}>
                         <span style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", width: 22, height: 22, background: T.border, borderRadius: 4, fontSize: 10, fontWeight: 700, color: T.textMuted, fontFamily: T.fontMono }}>
                           {pageIndex * pageSize + i + 1}
                         </span>
@@ -403,23 +424,27 @@ const Table = ({
                     )}
                     {row.cells.map((cell) => {
                       const cellProps = getCellProps ? getCellProps(cell) : {};
+                      const cellStyleFromProps = cellProps?.style || {};
+                      const textAlign = normalizeTextAlign(cellStyleFromProps.textAlign, getColumnAlign(cell.column));
+                      const renderedCell = cell.attachment_link ? (
+                        <a href={cell.attachment_link} style={{ color: T.accent, textDecoration: "none", fontWeight: 500, borderBottom: `1px solid ${T.accentMid}` }}>
+                          {cell.render("Cell")}
+                        </a>
+                      ) : (
+                        cell.render("Cell")
+                      );
                       return (
                         <td
                           {...cell.getCellProps([cellProps])}
                           style={{
-                            padding: "8px 12px", verticalAlign: "middle", 
+                            padding: "12px 14px", verticalAlign: "middle",
                             fontSize: 13.5, color: T.textPrimary, lineHeight: 1.45,
                             whiteSpace: "nowrap",
-                            ...(cellProps && cellProps.style ? cellProps.style : {}),
+                            ...cellStyleFromProps,
+                            textAlign,
                           }}
                         >
-                          {cell.attachment_link ? (
-                            <a href={cell.attachment_link} style={{ color: T.accent, textDecoration: "none", fontWeight: 500, borderBottom: `1px solid ${T.accentMid}` }}>
-                              {cell.render("Cell")}
-                            </a>
-                          ) : (
-                            cell.render("Cell")
-                          )}
+                          {renderedCell}
                         </td>
                       );
                     })}

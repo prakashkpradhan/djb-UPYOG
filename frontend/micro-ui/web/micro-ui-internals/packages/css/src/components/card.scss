@@ -107,6 +107,7 @@
   }
 
   .card-label {
+    word-wrap: anywhere;
     @apply text-legend text-text-primary mb-md;
   }
 
@@ -129,6 +130,12 @@
     padding-bottom: 0px;
     padding-left: 25px;
   }
+}
+
+.card-form-container {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
 }
 
 .vehicle-details-card {
@@ -182,7 +189,7 @@
   }
 
   header {
-    @apply font-rc font-medium text-legend text-white leading-10;
+    @apply font-rc font-medium text-legend text-white;
   }
 }
 
@@ -208,7 +215,6 @@
   }
 }
 @screen dt {
-
   .submit-bar,
   .submit-bar-disabled {
     width: 240px;
@@ -374,7 +380,7 @@
     }
 
     /* Remove any default margins that might interfere */
-    .label-field-pair>* {
+    .label-field-pair > * {
       margin: 0;
       width: 100%;
     }
@@ -515,7 +521,7 @@
   box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.08);
 }
 
-.new-employee-card>* {
+.new-employee-card > * {
   position: relative;
   z-index: 1;
 }
@@ -1235,7 +1241,7 @@
 
 .premium-sidebar.collapsed {
   width: var(--sidebar-collapsed);
-  padding:5px;
+  padding: 5px;
 }
 
 /* --- Header & Brand --- */
@@ -1430,7 +1436,6 @@
 }
 
 @media (max-width: 768px) {
-
   /* Wrapper becomes a sticky top bar, not a flex column member */
   .module-sidebar-wrapper {
     position: fixed;
@@ -1564,7 +1569,6 @@
 }
 
 @media (min-width: 768px) {
-
   .mobile-sidebar-toggle,
   .mobile-close-btn,
   .sidebar-backdrop {
