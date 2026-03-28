@@ -402,6 +402,121 @@ const SearchFillingPointAddress = () => {
   const fixedLength = fixedPointData?.waterTankerBookingDetail?.length || 0;
   const fillingLength = fillingPointData?.fillingPoints?.length || 0;
 
+  const applyFixedPointMappedFilter = React.useCallback(
+    (rows = []) => {
+      if (selectedTab !== "FIXED_POINT" || !appliedFixedPointStatus?.code) return rows;
+
+      return rows.filter((item) => {
+        const isMapped =
+          item.fillingPointId ||
+          item.fillingpointmetadata?.fillingPointId ||
+          item.fillingPtName ||
+          item.filling_pt_name ||
+          (item.fillingPoint && typeof item.fillingPoint === "object" ? item.fillingPoint?.id : item.fillingPoint) ||
+          item.fillingPointDetail?.id ||
+          item.fillingPointDetail?.bookingId;
+
+        if (appliedFixedPointStatus.code === "MAPPED") return !!isMapped;
+        if (appliedFixedPointStatus.code === "UNMAPPED") return !isMapped;
+        return true;
+      });
+    },
+    [appliedFixedPointStatus, selectedTab]
+  );
+
+  const getCSVExportData = React.useCallback(async () => {
+    const batchSize = 200;
+    let offset = 0;
+    let totalCount = Number.POSITIVE_INFINITY;
+    const rows = [];
+
+    while (offset < totalCount) {
+      const response =
+        selectedTab === "FIXED_POINT"
+          ? await Digit.WTService.SearchFixedPoint({
+            tenantId,
+            filters: { ...searchParams, offset, limit: batchSize },
+          })
+          : await Digit.WTService.SearchFillPoint({
+            tenantId,
+            filters: { ...searchParams, offset, limit: batchSize },
+          });
+
+      const pageRows = selectedTab === "FIXED_POINT"
+        ? response?.waterTankerBookingDetail || []
+        : response?.fillingPoints || [];
+
+      rows.push(...pageRows);
+
+      const resolvedTotal = Number(response?.Count ?? response?.count ?? response?.totalCount);
+      totalCount = Number.isFinite(resolvedTotal) && resolvedTotal >= 0 ? resolvedTotal : rows.length;
+
+      if (!pageRows.length || pageRows.length < batchSize) {
+        break;
+      }
+      offset += pageRows.length;
+    }
+
+    return applyFixedPointMappedFilter(rows);
+  }, [applyFixedPointMappedFilter, searchParams, selectedTab, tenantId]);
+
+  const csvExportColumns = React.useMemo(() => {
+    if (selectedTab === "FIXED_POINT") {
+      return [
+        {
+          Header: t("WT_APPLICANT_NAME"),
+          exportAccessor: (row) => row?.applicantDetail?.name || "NA",
+        },
+        {
+          Header: t("WT_MOBILE_NUMBER"),
+          exportAccessor: (row) => row?.applicantDetail?.mobileNumber || "NA",
+        },
+        {
+          Header: t("WT_LOCALITY"),
+          exportAccessor: (row) => row?.address?.locality || "NA",
+        },
+        {
+          Header: t("WT_FILLING_POINT"),
+          exportAccessor: (row) =>
+            row?.fillingPointId ||
+            row?.fillingpointmetadata?.fillingPointId ||
+            row?.fillingPtName ||
+            row?.filling_pt_name ||
+            (row?.fillingPoint && typeof row.fillingPoint === "object" ? row.fillingPoint?.id : row?.fillingPoint) ||
+            row?.fillingPointDetail?.id ||
+            row?.fillingPointDetail?.bookingId ||
+            "NA",
+        },
+      ];
+    }
+
+    return [
+      {
+        Header: t("WT_FILLING_POINT_NAME"),
+        exportAccessor: (row) => row?.fillingPointName || "NA",
+      },
+      {
+        Header: t("WT_AE_NAME"),
+        exportAccessor: (row) => row?.aeName || "NA",
+      },
+      {
+        Header: t("WT_JE_NAME"),
+        exportAccessor: (row) => row?.jeName || "NA",
+      },
+      {
+        Header: t("WT_EE_NAME"),
+        exportAccessor: (row) => row?.eeName || "NA",
+      },
+      {
+        Header: t("WT_LOCALITY"),
+        exportAccessor: (row) =>
+          row?.fillingPointLocalityCodes?.length > 0
+            ? row.fillingPointLocalityCodes.join(", ")
+            : row?.address?.locality || "NA",
+      },
+    ];
+  }, [selectedTab, t]);
+
   return (
     <React.Fragment>
       <Card>
@@ -517,6 +632,10 @@ const SearchFillingPointAddress = () => {
           isDownloadRequired={true}
           isFilterRequired={true}
           isSortRequired={true}
+          showCSVExport={true}
+          getCSVExportData={getCSVExportData}
+          csvExportColumns={csvExportColumns}
+          csvExportFileName={`wt-${selectedTab === "FIXED_POINT" ? "fixed-point" : "filling-point"}-search`}
         />
       </Card>
       {toast && <Toast error={toast.error} label={toast.label} onClose={closeToast} />}
