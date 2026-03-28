@@ -167,3 +167,70 @@ video::-webkit-media-controls-panel {
 .topbarOptionsClassName {
   right: -3rem !important;
 }
+
+.user-profile-pill {
+  display: flex;
+  align-items: center;
+  padding: 4px 16px 4px 4px;
+  border: 1px solid #d6d6d6;
+  border-radius: 50px !important;
+  background: white;
+  cursor: pointer;
+  gap: 12px;
+  transition: all 0.2s ease;
+  min-width: fit-content;
+
+  &:hover {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    border-color: #00497e;
+  }
+
+  .user-profile-avatar {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    background: #00497e;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 18px;
+    flex-shrink: 0;
+  }
+
+  .user-profile-img {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    object-fit: cover;
+    flex-shrink: 0;
+  }
+
+  .user-profile-info {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    line-height: 1.2;
+
+    .user-profile-name {
+      font-weight: 700;
+      font-size: 15px;
+      color: #0b111d;
+      white-space: nowrap;
+    }
+
+    .user-profile-details {
+      font-size: 13px;
+      color: #6b778c;
+      font-weight: 400;
+      white-space: nowrap;
+    }
+  }
+
+  .chevron-icon {
+    margin-left: 2px;
+    color: #6b778c;
+    flex-shrink: 0;
+  }
+}

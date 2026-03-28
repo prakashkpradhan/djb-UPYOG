@@ -51,6 +51,7 @@
       @apply text-heading-s;
       white-space: break-spaces !important;
       word-break: break-all;
+      text-align: center;
     }
 
     .caption {
@@ -109,7 +110,7 @@
   }
   &.status-radio-table {
     margin-top: 1rem;
-    .row {  
+    .row {
       span {
         width: 24px;
         display: block;
@@ -120,15 +121,17 @@
   }
 
   &.view-header {
-   .row {
-    display: grid;
-    grid-template-columns: 1fr 68%;
-   }
+    .row {
+      display: grid;
+      grid-template-columns: 1fr 68%;
+    }
   }
 }
 
-
-.pt-citizen {.data-table {.row {
-  justify-content: space-between;
-
-}}}
+.pt-citizen {
+  .data-table {
+    .row {
+      justify-content: space-between;
+    }
+  }
+}
