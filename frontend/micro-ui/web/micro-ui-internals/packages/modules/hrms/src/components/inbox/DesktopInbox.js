@@ -65,9 +65,10 @@ const DesktopInbox = ({ tableConfig, filterComponent, ...props }) => {
         disableSortBy: true,
         Cell: ({ row }) => {
           return GetCell(
-            `${t(
-              "COMMON_MASTERS_DESIGNATION_" + row.original?.assignments?.sort((a, b) => new Date(a.fromDate) - new Date(b.fromDate))[0]?.designation
-            ) || ""
+            `${
+              t(
+                "COMMON_MASTERS_DESIGNATION_" + row.original?.assignments?.sort((a, b) => new Date(a.fromDate) - new Date(b.fromDate))[0]?.designation
+              ) || ""
             }`
           );
         },
@@ -77,9 +78,10 @@ const DesktopInbox = ({ tableConfig, filterComponent, ...props }) => {
         disableSortBy: true,
         Cell: ({ row }) => {
           return GetCell(
-            `${t(
-              "COMMON_MASTERS_DEPARTMENT_" + row.original?.assignments?.sort((a, b) => new Date(a.fromDate) - new Date(b.fromDate))[0]?.department
-            ) || ""
+            `${
+              t(
+                "COMMON_MASTERS_DEPARTMENT_" + row.original?.assignments?.sort((a, b) => new Date(a.fromDate) - new Date(b.fromDate))[0]?.department
+              ) || ""
             }`
           );
         },
@@ -139,47 +141,49 @@ const DesktopInbox = ({ tableConfig, filterComponent, ...props }) => {
   }
 
   return (
-    <div className="inbox-container">
-      {!props.isSearch && (
-        <div className="filters-container">
-          <InboxLinks
-            parentRoute={props.parentRoute}
-            allLinks={[
+    <div className="app-container">
+      <div className="inbox-container">
+        {!props.isSearch && (
+          <div className="filters-container">
+            <InboxLinks
+              parentRoute={props.parentRoute}
+              allLinks={[
+                {
+                  text: "HR_COMMON_CREATE_EMPLOYEE_HEADER",
+                  link: "/digit-ui/employee/hrms/create",
+                  businessService: "hrms",
+                  roles: ["HRMS_ADMIN"],
+                },
+              ]}
+              headerText={"HRMS"}
+              businessService={props.businessService}
+            />
+            <div>
               {
-                text: "HR_COMMON_CREATE_EMPLOYEE_HEADER",
-                link: "/digit-ui/employee/hrms/create",
-                businessService: "hrms",
-                roles: ["HRMS_ADMIN"],
-              },
-            ]}
-            headerText={"HRMS"}
-            businessService={props.businessService}
-          />
-          <div>
-            {
-              <FilterComponent
-                defaultSearchParams={props.defaultSearchParams}
-                onFilterChange={props.onFilterChange}
-                searchParams={props.searchParams}
-                type="desktop"
-                tenantIds={tenantIds}
-              />
-            }
+                <FilterComponent
+                  defaultSearchParams={props.defaultSearchParams}
+                  onFilterChange={props.onFilterChange}
+                  searchParams={props.searchParams}
+                  type="desktop"
+                  tenantIds={tenantIds}
+                />
+              }
+            </div>
           </div>
-        </div>
-      )}
-      <div className="form-search-wrapper employee-form-content">
-        <SearchApplication
-          defaultSearchParams={props.defaultSearchParams}
-          onSearch={props.onSearch}
-          type="desktop"
-          tenantIds={tenantIds}
-          searchFields={props.searchFields}
-          isInboxPage={!props?.isSearch}
-          searchParams={props.searchParams}
-        />
-        <div className="result" style={{ flex: 1 }}>
-          {result}
+        )}
+        <div className="form-search-wrapper employee-form-content">
+          <SearchApplication
+            defaultSearchParams={props.defaultSearchParams}
+            onSearch={props.onSearch}
+            type="desktop"
+            tenantIds={tenantIds}
+            searchFields={props.searchFields}
+            isInboxPage={!props?.isSearch}
+            searchParams={props.searchParams}
+          />
+          <div className="result" style={{ flex: 1 }}>
+            {result}
+          </div>
         </div>
       </div>
     </div>

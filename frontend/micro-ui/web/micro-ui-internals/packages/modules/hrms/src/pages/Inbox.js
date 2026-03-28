@@ -1,5 +1,5 @@
-import { Header, Loader } from "@djb25/digit-ui-react-components";
 import React, { useCallback, useEffect, useState } from "react";
+import { Loader } from "@djb25/digit-ui-react-components";
 import { useTranslation } from "react-i18next";
 import DesktopInbox from "../components/inbox/DesktopInbox";
 import MobileInbox from "../components/inbox/MobileInbox";
@@ -28,7 +28,6 @@ const Inbox = ({ parentRoute, businessService = "HRMS", initialStates = {}, filt
     paginationParams,
     isupdate
   );
-  console.log(data, 'hrms search data')
 
   useEffect(() => {
     if (res) {
@@ -36,7 +35,7 @@ const Inbox = ({ parentRoute, businessService = "HRMS", initialStates = {}, filt
     }
   }, [res]);
 
-  useEffect(() => { }, [hookLoading, rest]);
+  useEffect(() => {}, [hookLoading, rest]);
 
   useEffect(() => {
     setPageOffset(0);
@@ -120,12 +119,10 @@ const Inbox = ({ parentRoute, businessService = "HRMS", initialStates = {}, filt
           linkPrefix={"/digit-ui/employee/hrms/details/"}
           filterComponent={filterComponent}
         />
-        // <div></div>
       );
     } else {
       return (
-        <div className="" style={{ height: "inherit" }}>
-          {/* {isInbox && <Header>{t("HR_HOME_SEARCH_RESULTS_HEADING")}</Header>} */}
+        <div className="employee-form-content">
           <DesktopInbox
             businessService={businessService}
             data={data}

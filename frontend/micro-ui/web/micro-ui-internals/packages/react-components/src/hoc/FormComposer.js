@@ -415,7 +415,7 @@ export const FormComposer = (props) => {
 
   return (
     <form
-      style={{ minHeight: "100%", height: "100%", overflowY: "scroll" }}
+      style={{ minHeight: "100%", height: "100%", overflowY: "scroll", flex: "1" }}
       onSubmit={handleSubmit(onSubmit)}
       onKeyDown={(e) => checkKeyDown(e)}
       id={props.formId}
