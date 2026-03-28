@@ -66,6 +66,15 @@ public class Address {
 
 	private String type;
 
+	@JsonProperty("ward")
+	private String ward;
+
+	@JsonProperty("zone")
+	private String zone;
+
+	@JsonProperty("constituency")
+	private String constituency;
+
 	@NotBlank
 	private String pincode;
 

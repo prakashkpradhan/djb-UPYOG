@@ -127,6 +127,9 @@ public class WaterTankerFixedPointRowMapper
                 .latitude(rs.getString("addr_latitude"))
                 .longitude(rs.getString("addr_longitude"))
                 .type(rs.getString("addr_type"))
+                .ward(rs.getString("ward"))
+                .zone(rs.getString("zone"))
+                .constituency(rs.getString("constituency"))
                 .build();
     }
 

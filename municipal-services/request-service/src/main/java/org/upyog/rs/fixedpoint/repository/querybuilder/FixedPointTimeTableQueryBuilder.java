@@ -26,11 +26,17 @@ public class FixedPointTimeTableQueryBuilder {
         return count != null && count > 0;
     }
 
-    private static final String SEARCH_QUERY = "SELECT system_assigned_schedule_id, fixed_point_code, day, trip_no, arrival_time_to_fpl, " +
-            "departure_time_from_fpl, arrival_time_delivery_point, departure_time_delivery_point, " +
-            "time_of_arriving_back_fpl_after_delivery, volume_water_tobe_delivery, active, is_enable, " +
-            "remarks, vehicle_id, tenant_id, createdby, lastmodifiedby, createdtime, lastmodifiedtime " +
-            "FROM public.eg_fixed_point_time_table";
+    private static final String SEARCH_QUERY =
+            "SELECT fpt.system_assigned_schedule_id, fpt.fixed_point_code, fpt.day, fpt.trip_no, " +
+                    "fpt.arrival_time_to_fpl, fpt.departure_time_from_fpl, " +
+                    "fpt.arrival_time_delivery_point, fpt.departure_time_delivery_point, " +
+                    "fpt.time_of_arriving_back_fpl_after_delivery, fpt.volume_water_tobe_delivery, " +
+                    "fpt.active, fpt.is_enable, fpt.remarks, fpt.vehicle_id, fpt.tenant_id, " +
+                    "fpt.createdby, fpt.lastmodifiedby, fpt.createdtime, fpt.lastmodifiedtime, " +
+                    "apd.name AS fixed_point_name " +
+                    "FROM public.eg_fixed_point_time_table fpt " +
+                    "LEFT JOIN public.upyog_rs_water_tanker_applicant_details apd " +
+                    "ON apd.booking_id = fpt.fixed_point_code";
 
     private static final String COUNT_QUERY = "SELECT count(*) FROM public.eg_fixed_point_time_table";
 

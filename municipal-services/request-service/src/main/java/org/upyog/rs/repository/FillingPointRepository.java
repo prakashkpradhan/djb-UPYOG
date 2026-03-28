@@ -62,6 +62,7 @@ public class FillingPointRepository {
                         "ad.street_name, ad.landmark, ad.city, ad.city_code, " +
                         "ad.locality, ad.locality_code, ad.pincode, " +
                         "ad.latitude, ad.longitude, ad.type AS addr_type, fp.id as filling_point_id, " +
+                        "ad.ward, ad.zone, ad.constituency, "+
                         "lm.locality_code AS filling_point_locality_code " +
                         "FROM upyog_rs_water_tanker_filling_point fp " +
                         "LEFT JOIN upyog_rs_water_tanker_address_details ad " +
@@ -165,6 +166,9 @@ public class FillingPointRepository {
                             address.setLatitude(rs.getString("latitude"));
                             address.setLongitude(rs.getString("longitude"));
                             address.setType(rs.getString("addr_type"));
+                            address.setWard(rs.getString("ward"));
+                            address.setZone(rs.getString("zone"));
+                            address.setConstituency(rs.getString("constituency"));
                             newFp.setAddress(address);
                         }
                         } catch (SQLException e) {
