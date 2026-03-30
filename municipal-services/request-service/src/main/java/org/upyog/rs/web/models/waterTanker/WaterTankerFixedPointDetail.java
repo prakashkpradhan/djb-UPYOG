@@ -36,8 +36,5 @@ public class WaterTankerFixedPointDetail {
 
     @JsonProperty("fillingPoint")
     private FillingPoint fillingPoint;
-
-    private String bookingId;
     private String mobileNumber;
-    private String bookingNo;
 }

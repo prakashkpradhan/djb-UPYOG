@@ -8,10 +8,12 @@ import java.util.List;
 @Component
 public class WaterTankerFixedPointQueryBuilder {
 
+    private static final int DEFAULT_PAGE_SIZE = 20;
+    private static final int MAX_PAGE_SIZE = 100;
+
         private static final String BASE_QUERY =
                 "SELECT " +
                         "ad.applicant_id, " +
-                        "ad.booking_id, " +
                         "ad.name, " +
                         "ad.mobile_number AS applicant_mobile_number, " +
                         "ad.email_id, " +
@@ -79,29 +81,116 @@ public class WaterTankerFixedPointQueryBuilder {
                         "LEFT JOIN public.upyog_rs_water_tanker_address_details fpa " +
                         "ON fp.id = fpa.applicant_id AND fpa.type = 'FIXED-POINT' ";
 
-        private static final String ORDER_BY = " ORDER BY ad.createdtime DESC ";
+    private static final String ORDER_BY = " ORDER BY ad.fixed_point_id ASC ";
 
-        public String getWaterTankerFixedPointQuery(
-                WaterTankerFixedPointBookingSearchCriteria criteria,
-                List<Object> preparedStmtList) {
 
-            StringBuilder query = new StringBuilder(BASE_QUERY);
+//    public String getWaterTankerFixedPointQuery(
+//            WaterTankerFixedPointBookingSearchCriteria criteria,
+//            List<Object> preparedStmtList) {
+//
+//        StringBuilder query = new StringBuilder(BASE_QUERY);
+//
+//        query.append(" WHERE ad.type = ? ");
+//        preparedStmtList.add("FIXED-POINT");
+//
+//        if (criteria.getMobileNumber() != null && !criteria.getMobileNumber().trim().isEmpty()) {
+//            query.append(" AND ad.mobile_number = ? ");
+//            preparedStmtList.add(criteria.getMobileNumber());
+//        }
+//
+//        if (criteria.getName() != null && !criteria.getName().trim().isEmpty()) {
+//            query.append(" AND ad.name ILIKE ? ");
+//            preparedStmtList.add("%" + criteria.getName() + "%");
+//        }
+//
+//        query.append(ORDER_BY);
+//
+//        int pageSize = resolvePageSize(criteria.getPageSize());
+//        query.append(" LIMIT ? ");
+//        preparedStmtList.add(pageSize);
+//
+//        int pageNo = (criteria.getPageNo() != null && criteria.getPageNo() > 0)
+//                ? criteria.getPageNo() : 1;
+//        int offset = (pageNo - 1) * pageSize;
+//        query.append(" OFFSET ? ");
+//        preparedStmtList.add(offset);
+//
+//        return query.toString();
+//    }
 
-            query.append(" WHERE ad.type = ? ");
-            preparedStmtList.add("FIXED-POINT");
+    public String getWaterTankerFixedPointQuery(
+            WaterTankerFixedPointBookingSearchCriteria criteria,
+            List<Object> preparedStmtList) {
 
-            if (criteria.getMobileNumber() != null && !criteria.getMobileNumber().trim().isEmpty()) {
-                query.append(" AND ad.mobile_number = ? ");
-                preparedStmtList.add(criteria.getMobileNumber());
-            }
+        StringBuilder query = new StringBuilder(BASE_QUERY);
 
-            if (criteria.getName() != null && !criteria.getName().trim().isEmpty()) {
-                query.append(" AND ad.name ILIKE ? ");
-                preparedStmtList.add("%" + criteria.getName() + "%");
-            }
+        query.append(" WHERE ad.type = ? ");
+        preparedStmtList.add("FIXED-POINT");
 
-            query.append(ORDER_BY);
+        if (criteria.getMobileNumber() != null && !criteria.getMobileNumber().trim().isEmpty()) {
+            query.append(" AND ad.mobile_number = ? ");
+            preparedStmtList.add(criteria.getMobileNumber());
+        }
+
+        if (criteria.getName() != null && !criteria.getName().trim().isEmpty()) {
+            query.append(" AND ad.name ILIKE ? ");
+            preparedStmtList.add("%" + criteria.getName() + "%");
+        }
+
+        query.append(" ORDER BY ad.fixed_point_id ASC ");
+
+        int limit = (criteria.getLimit() != null && criteria.getLimit() > 0)
+                ? Math.min(criteria.getLimit(), 100)
+                : 10;
+        query.append(" LIMIT ? ");
+        preparedStmtList.add(limit);
+
+        int offset = (criteria.getOffset() != null && criteria.getOffset() >= 0)
+                ? criteria.getOffset()
+                : 0;
+        query.append(" OFFSET ? ");
+        preparedStmtList.add(offset);
+
+        return query.toString();
+    }
+
+
+    public String getApproximateCountQuery(
+            WaterTankerFixedPointBookingSearchCriteria criteria,
+            List<Object> preparedStmtList) {
+
+        boolean hasFilters = (criteria.getMobileNumber() != null && !criteria.getMobileNumber().trim().isEmpty())
+                || (criteria.getName() != null && !criteria.getName().trim().isEmpty());
+
+        if (hasFilters) {
+            StringBuilder query = new StringBuilder(
+                    "SELECT COUNT(*) FROM public.upyog_rs_water_tanker_applicant_details ad " +
+                            "WHERE ad.type = 'FIXED-POINT' "
+            );
+            applyFilters(query, criteria, preparedStmtList);
             return query.toString();
         }
+
+        return "SELECT reltuples::BIGINT AS count " +
+                "FROM pg_class WHERE relname = 'upyog_rs_water_tanker_applicant_details'";
+    }
+
+    private void applyFilters(StringBuilder query,
+                              WaterTankerFixedPointBookingSearchCriteria criteria,
+                              List<Object> preparedStmtList) {
+        if (criteria.getMobileNumber() != null && !criteria.getMobileNumber().trim().isEmpty()) {
+            query.append(" AND ad.mobile_number = ? ");
+            preparedStmtList.add(criteria.getMobileNumber());
+        }
+        if (criteria.getName() != null && !criteria.getName().trim().isEmpty()) {
+            query.append(" AND ad.name ILIKE ? ");
+            preparedStmtList.add("%" + criteria.getName() + "%");
+        }
+    }
+
+    private int resolvePageSize(Integer requested) {
+        if (requested == null || requested <= 0) return DEFAULT_PAGE_SIZE;
+        return Math.min(requested, MAX_PAGE_SIZE);
+    }
 
 }

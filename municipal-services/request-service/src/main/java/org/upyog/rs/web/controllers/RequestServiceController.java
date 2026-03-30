@@ -14,6 +14,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.upyog.rs.constant.RequestServiceConstants;
 import org.upyog.rs.service.MobileToiletService;
 import org.upyog.rs.service.WaterTankerService;
@@ -110,29 +111,85 @@ public class RequestServiceController {
 				.waterTankerBookingDetails(applications).responseInfo(responseInfo).count(count).build();
 		return new ResponseEntity<>(response, HttpStatus.OK);
 	}
-
-
-	// Fixed Point Water Tanked Search
+//	@PostMapping("/water-tanker/fixed-point/v1/_search")
+//	public ResponseEntity<WaterTankerFixedPointBookingSearchResponse> search(
+//			@Valid @RequestBody RequestInfoWrapper requestInfoWrapper,
+//			@RequestParam(required = false) String mobileNumber,
+//			@RequestParam(required = false) String name,
+//			@RequestParam(value = "page_size", defaultValue = "20") Integer pageSize,
+//			@RequestParam(value = "page_no", defaultValue = "1") Integer pageNo,
+//			@RequestParam(required = false) String tenantId) {
+//
+//		WaterTankerFixedPointBookingSearchCriteria criteria =
+//				WaterTankerFixedPointBookingSearchCriteria.builder()
+//						.mobileNumber(mobileNumber)
+//						.name(name)
+//						.pageSize(Math.min(pageSize, 100))
+//						.pageNo(pageNo)
+//						.build();
+//
+//		List<WaterTankerFixedPointDetail> applications =
+//				waterTankerService.getWaterTankerFixedPointBookingDetails(
+//						requestInfoWrapper.getRequestInfo(), criteria);
+//
+//		Long count = waterTankerService.getWaterTankerFixedPointCount(criteria);
+//		boolean hasMore = (long) pageNo * pageSize < count;
+//
+//		ResponseInfo responseInfo = RequestServiceUtil.createReponseInfo(
+//				requestInfoWrapper.getRequestInfo(),
+//				RequestServiceConstants.BOOKING_DETAIL_FOUND,
+//				StatusEnum.SUCCESSFUL);
+//
+//		return new ResponseEntity<>(
+//				WaterTankerFixedPointBookingSearchResponse.builder()
+//						.waterTankerFixedPointDetails(applications)
+//						.responseInfo(responseInfo)
+//						.count(count)
+//						.pageSize(pageSize)
+//						.hasMore(hasMore)
+//						.build(),
+//				HttpStatus.OK);
+//	}
 
 	@PostMapping("/water-tanker/fixed-point/v1/_search")
-	public ResponseEntity<WaterTankerFixedPointBookingSearchResponse> searchWaterTankerFixedPointBookingDetails(
-			@ApiParam(value = "Details for the water tanker booking time, payment and documents", required = true) @Valid @RequestBody RequestInfoWrapper requestInfoWrapper,
-			@ModelAttribute WaterTankerFixedPointBookingSearchCriteria waterTankerFixedPointBookingSearchCriteria) {
+	public ResponseEntity<WaterTankerFixedPointBookingSearchResponse> search(
+			@Valid @RequestBody RequestInfoWrapper requestInfoWrapper,
+			@ModelAttribute WaterTankerFixedPointBookingSearchCriteria criteria) {
 
-		List<WaterTankerFixedPointDetail> applications = null;
-		Integer count = 0;
+		int limit = (criteria.getLimit() != null && criteria.getLimit() > 0)
+				? Math.min(criteria.getLimit(), 100)
+				: 10;
+		criteria.setLimit(limit);
 
-		applications = waterTankerService.getWaterTankerFixedPointBookingDetails(requestInfoWrapper.getRequestInfo(),
-				waterTankerFixedPointBookingSearchCriteria);
+		// ✅ Resolve offset with default
+		int offset = (criteria.getOffset() != null && criteria.getOffset() >= 0)
+				? criteria.getOffset()
+				: 0;
+		criteria.setOffset(offset);
 
-		ResponseInfo responseInfo = RequestServiceUtil.createReponseInfo(requestInfoWrapper.getRequestInfo(),
-				RequestServiceConstants.BOOKING_DETAIL_FOUND, StatusEnum.SUCCESSFUL);
+		List<WaterTankerFixedPointDetail> applications =
+				waterTankerService.getWaterTankerFixedPointBookingDetails(
+						requestInfoWrapper.getRequestInfo(), criteria);
 
-		WaterTankerFixedPointBookingSearchResponse response = WaterTankerFixedPointBookingSearchResponse.builder()
-				.waterTankerFixedPointDetails(applications).responseInfo(responseInfo).count(count).build();
-		return new ResponseEntity<>(response, HttpStatus.OK);
+		Long count = waterTankerService.getWaterTankerFixedPointCount(criteria);
+
+		boolean hasMore = (offset + limit) < count;
+
+		ResponseInfo responseInfo = RequestServiceUtil.createReponseInfo(
+				requestInfoWrapper.getRequestInfo(),
+				RequestServiceConstants.BOOKING_DETAIL_FOUND,
+				StatusEnum.SUCCESSFUL);
+
+		return new ResponseEntity<>(
+				WaterTankerFixedPointBookingSearchResponse.builder()
+						.waterTankerFixedPointDetails(applications)
+						.responseInfo(responseInfo)
+						.count(count)
+						.pageSize(limit)
+						.hasMore(hasMore)
+						.build(),
+				HttpStatus.OK);
 	}
-
 	@PostMapping("/water-tanker/v1/_update")
 	public ResponseEntity<WaterTankerBookingResponse> waterTankerUpdate(
 			@ApiParam(value = "Updated water tanker details and RequestInfo meta data.", required = true)
@@ -155,8 +212,8 @@ public class RequestServiceController {
 		log.info("updateWaterTankerFixedPointRequest : {}", waterTankerFixedPointRequest);
 
 		if (waterTankerFixedPointRequest.getWaterTankerFixedPointDetail() == null
-				|| waterTankerFixedPointRequest.getWaterTankerFixedPointDetail().getBookingId() == null) {
-			throw new CustomException("INVALID_REQUEST", "bookingId is mandatory for update");
+				|| waterTankerFixedPointRequest.getWaterTankerFixedPointDetail().getApplicantDetail() == null) {
+			throw new CustomException("INVALID_REQUEST", "applicantID is mandatory for update");
 		}
 
 		WaterTankerFixedPointDetail updated =

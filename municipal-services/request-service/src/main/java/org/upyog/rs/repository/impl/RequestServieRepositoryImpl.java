@@ -138,6 +138,19 @@ public class RequestServieRepositoryImpl implements RequestServiceRepository {
 	}
 
 	@Override
+	public Long getWaterTankerFixedPointCount(
+			WaterTankerFixedPointBookingSearchCriteria criteria) {
+
+		List<Object> preparedStmtList = new ArrayList<>();
+		String query = waterTankerFixedPointQueryBuilder
+				.getApproximateCountQuery(criteria, preparedStmtList);
+
+		Long count = jdbcTemplate.queryForObject(
+				query, preparedStmtList.toArray(), Long.class);
+		return count != null ? count : 0L;
+	}
+
+	@Override
 	public Integer getApplicationsCount(WaterTankerBookingSearchCriteria criteria) {
 		List<Object> preparedStatement = new ArrayList<>();
 		String query = queryBuilder.getWaterTankerQuery(criteria, preparedStatement);

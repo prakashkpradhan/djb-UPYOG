@@ -23,8 +23,20 @@ import java.util.List;
         @JsonProperty("ResponseInfo")
         private ResponseInfo responseInfo;
 
+        @JsonProperty("hasMore")
+        private Boolean hasMore;
         @JsonProperty("waterTankerBookingDetail")
         private List<WaterTankerFixedPointDetail> waterTankerFixedPointDetails;
 
-        private Integer count;
+        @JsonProperty("count")
+        private Long count;
+
+        @JsonProperty("pageSize")
+        private Integer pageSize;
+
+        @JsonProperty("lastFixedPointId")
+        private String lastFixedPointId;
+
+        @JsonProperty("lastApplicantId")
+        private String lastApplicantId;
     }

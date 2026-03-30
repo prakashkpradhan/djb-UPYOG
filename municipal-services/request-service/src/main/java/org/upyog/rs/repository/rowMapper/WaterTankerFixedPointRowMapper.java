@@ -78,7 +78,6 @@ public class WaterTankerFixedPointRowMapper
                 .build();
 
         return WaterTankerFixedPointDetail.builder()
-                .bookingId(rs.getString("booking_id"))
                 .mobileNumber(rs.getString("applicant_mobile_number"))
                 .auditDetails(auditDetails)
                 .applicantDetail(buildApplicantDetail(rs))
@@ -98,7 +97,6 @@ public class WaterTankerFixedPointRowMapper
 
         return ApplicantDetail.builder()
                 .applicantId(rs.getString("applicant_id"))
-                .bookingId(rs.getString("booking_id"))
                 .name(rs.getString("name"))
                 .mobileNumber(rs.getString("applicant_mobile_number"))
                 .emailId(rs.getString("email_id"))

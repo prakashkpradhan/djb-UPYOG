@@ -20,6 +20,7 @@ public interface RequestServiceRepository {
 	List<WaterTankerBookingDetail> getWaterTankerBookingDetails(WaterTankerBookingSearchCriteria waterTankerBookingSearchCriteria);
 
 	List<WaterTankerFixedPointDetail> getWaterTankerFixedPointBookingDetails(WaterTankerFixedPointBookingSearchCriteria waterTankerFixedPointBookingSearchCriteria);
+	Long getWaterTankerFixedPointCount(WaterTankerFixedPointBookingSearchCriteria criteria);
 
 	Integer getApplicationsCount(WaterTankerBookingSearchCriteria criteria);
 

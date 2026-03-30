@@ -142,7 +142,7 @@ public class WaterTankerServiceImpl implements WaterTankerService {
 		log.info("Update fixed point water tanker booking for user: "
 				+ waterTankerFixedPointRequest.getRequestInfo().getUserInfo().getUuid()
 				+ " for bookingId: "
-				+ waterTankerFixedPointRequest.getWaterTankerFixedPointDetail().getBookingId());
+				+ waterTankerFixedPointRequest.getWaterTankerFixedPointDetail());
 
 		enrichmentService.enrichUpdateFixedPointWaterTankerRequest(waterTankerFixedPointRequest);
 
@@ -181,13 +181,27 @@ public class WaterTankerServiceImpl implements WaterTankerService {
 
 	@Override
 	public List<WaterTankerFixedPointDetail> getWaterTankerFixedPointBookingDetails(RequestInfo requestInfo, WaterTankerFixedPointBookingSearchCriteria waterTankerFixedPointBookingSearchCriteria) {
-		List<WaterTankerFixedPointDetail> applications = requestServiceRepository
-				.getWaterTankerFixedPointBookingDetails(waterTankerFixedPointBookingSearchCriteria);
+			if (waterTankerFixedPointBookingSearchCriteria.getPageSize() == null || waterTankerFixedPointBookingSearchCriteria.getPageSize() <= 0) {
+				waterTankerFixedPointBookingSearchCriteria.setPageSize(20);
+			} else if (waterTankerFixedPointBookingSearchCriteria.getPageSize() > 100) {
+				waterTankerFixedPointBookingSearchCriteria.setPageSize(100);
+			}
 
-		if (CollectionUtils.isEmpty(applications)) {
-			return new ArrayList<>();
+			List<WaterTankerFixedPointDetail> applications =
+					requestServiceRepository.getWaterTankerFixedPointBookingDetails(waterTankerFixedPointBookingSearchCriteria);
+
+			if (CollectionUtils.isEmpty(applications)) {
+				return new ArrayList<>();
+			}
+
+			return applications;
 		}
-		return applications;
+
+	@Override
+	public Long getWaterTankerFixedPointCount(
+			WaterTankerFixedPointBookingSearchCriteria criteria) {
+
+		return requestServiceRepository.getWaterTankerFixedPointCount(criteria);
 	}
 
 	@Override
