@@ -344,8 +344,9 @@ public class WaterTankerServiceImpl implements WaterTankerService {
 
 
 	@Override
-	public List<RequestDetailsByDriverId.RequestDetailsInfo> getBookingAndAssignmentDetails(String driverId) {
-		return requestServiceRepository.getFullBookingDetailsByDriver(driverId);
+	public List<RequestDetailsByDriverId.RequestDetailsInfo> getBookingAndAssignmentDetails(
+			String driverId, Long fromDate, Long toDate) {
+		return requestServiceRepository.getFullBookingDetailsByDriver(driverId, fromDate, toDate);
 	}
 
 	@Override

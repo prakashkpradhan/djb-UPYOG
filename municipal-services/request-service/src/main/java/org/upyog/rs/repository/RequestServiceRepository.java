@@ -33,7 +33,7 @@ public interface RequestServiceRepository {
 
 	void updateMobileToiletBooking(MobileToiletBookingRequest mobileToiletRequest);
 
-	public List<RequestDetailsByDriverId.RequestDetailsInfo> getFullBookingDetailsByDriver(String driverId);
+	public List<RequestDetailsByDriverId.RequestDetailsInfo> getFullBookingDetailsByDriver(String driverId, Long fromDate, Long toDate);
 
 	public void save(FixedFillingPointMapping mapping);
 
