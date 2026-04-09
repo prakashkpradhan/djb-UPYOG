@@ -222,7 +222,7 @@ const WSFeeEstimation = ({ wsAdditionalDetails, workflowDetails }) => {
                 key={`CS_INBOX_STATUS_FILTER`}
                 label={`${t(`CS_INBOX_STATUS_FILTER`)}`}
                 text={isPaid ? t("WS_COMMON_PAID_LABEL") : t("WS_COMMON_NOT_PAID")}
-                textStyle={!isPaid ? { color: "#D4351C" } : { color: "#00703C" }}
+                textStyle={!isPaid ? { color: "#D83A2F" } : { color: "#2E9E8F" }}
               />
             </div>
           </StatusTable>
@@ -400,5 +400,4 @@ const WSFeeEstimation = ({ wsAdditionalDetails, workflowDetails }) => {
     </Fragment>
   );
 };
-
 export default WSFeeEstimation;
